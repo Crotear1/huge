@@ -23,7 +23,7 @@ class RegistrationModel
         $user_password_repeat = Request::post('user_password_repeat');
 
         // stop registration flow if registrationInputValidation() returns false (= anything breaks the input check rules)
-        $validation_result = self::registrationInputValidation(Request::post('captcha'), $user_name, $user_password_new, $user_password_repeat, $user_email, $user_email_repeat);
+        $validation_result = self::registrationInputValidation($user_name, $user_password_new, $user_password_repeat, $user_email, $user_email_repeat);
         if (!$validation_result) {
             return false;
         }
@@ -91,15 +91,15 @@ class RegistrationModel
      *
      * @return bool
      */
-    public static function registrationInputValidation($captcha, $user_name, $user_password_new, $user_password_repeat, $user_email, $user_email_repeat)
+    public static function registrationInputValidation($user_name, $user_password_new, $user_password_repeat, $user_email, $user_email_repeat)
     {
         $return = true;
 
-        // perform all necessary checks
-        if (!CaptchaModel::checkCaptcha($captcha)) {
-            Session::add('feedback_negative', Text::get('FEEDBACK_CAPTCHA_WRONG'));
-            $return = false;
-        }
+        // // perform all necessary checks
+        // if (!CaptchaModel::checkCaptcha($captcha)) {
+        //     Session::add('feedback_negative', Text::get('FEEDBACK_CAPTCHA_WRONG'));
+        //     $return = false;
+        // }
 
         // if username, email and password are all correctly validated, but make sure they all run on first sumbit
         if (self::validateUserName($user_name) AND self::validateUserEmail($user_email, $user_email_repeat) AND self::validateUserPassword($user_password_new, $user_password_repeat) AND $return) {
@@ -205,21 +205,22 @@ class RegistrationModel
         $database = DatabaseFactory::getFactory()->getConnection();
 
         // write new users data into database
-        $sql = "INSERT INTO users (user_name, user_password_hash, user_email, user_creation_timestamp, user_activation_hash, user_provider_type)
-                    VALUES (:user_name, :user_password_hash, :user_email, :user_creation_timestamp, :user_activation_hash, :user_provider_type)";
+        $sql = "INSERT INTO users (user_name, user_password_hash, user_email, user_creation_timestamp, user_activation_hash, user_provider_type, user_active)
+                    VALUES (:user_name, :user_password_hash, :user_email, :user_creation_timestamp, :user_activation_hash, :user_provider_type, :user_active)";
         $query = $database->prepare($sql);
         $query->execute(array(':user_name' => $user_name,
                               ':user_password_hash' => $user_password_hash,
                               ':user_email' => $user_email,
                               ':user_creation_timestamp' => $user_creation_timestamp,
                               ':user_activation_hash' => $user_activation_hash,
+                              ':user_active' => 1,
                               ':user_provider_type' => 'DEFAULT'));
         $count =  $query->rowCount();
         if ($count == 1) {
             return true;
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -273,21 +274,21 @@ class RegistrationModel
      *
      * @return bool success status
      */
-    public static function verifyNewUser($user_id, $user_activation_verification_code)
-    {
-        $database = DatabaseFactory::getFactory()->getConnection();
+    // public static function verifyNewUser($user_id, $user_activation_verification_code)
+    // {
+    //     $database = DatabaseFactory::getFactory()->getConnection();
 
-        $sql = "UPDATE users SET user_active = 1, user_activation_hash = NULL
-                WHERE user_id = :user_id AND user_activation_hash = :user_activation_hash LIMIT 1";
-        $query = $database->prepare($sql);
-        $query->execute(array(':user_id' => $user_id, ':user_activation_hash' => $user_activation_verification_code));
+    //     $sql = "UPDATE users SET user_active = 1, user_activation_hash = NULL
+    //             WHERE user_id = :user_id AND user_activation_hash = :user_activation_hash LIMIT 1";
+    //     $query = $database->prepare($sql);
+    //     $query->execute(array(':user_id' => $user_id, ':user_activation_hash' => $user_activation_verification_code));
 
-        if ($query->rowCount() == 1) {
-            Session::add('feedback_positive', Text::get('FEEDBACK_ACCOUNT_ACTIVATION_SUCCESSFUL'));
-            return true;
-        }
+    //     if ($query->rowCount() == 1) {
+    //         Session::add('feedback_positive', Text::get('FEEDBACK_ACCOUNT_ACTIVATION_SUCCESSFUL'));
+    //         return true;
+    //     }
 
-        Session::add('feedback_negative', Text::get('FEEDBACK_ACCOUNT_ACTIVATION_FAILED'));
-        return false;
-    }
+    //     Session::add('feedback_negative', Text::get('FEEDBACK_ACCOUNT_ACTIVATION_FAILED'));
+    //     return false;
+    // }
 }
