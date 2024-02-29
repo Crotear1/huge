@@ -24,6 +24,8 @@ class RegisterController extends Controller
     {
         if (LoginModel::isUserLoggedIn() && LoginModel::isAdmin()) {
             $this->View->render('register/index');
+        } else {
+            Redirect::to('login/index');
         }
     }
 
