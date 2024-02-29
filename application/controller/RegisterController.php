@@ -33,11 +33,8 @@ class RegisterController extends Controller
      */
     public function register_action()
     {
-        $registration_successful = RegistrationModel::registerNewUser();
-
-        if ($registration_successful) {
-            $this->View->render('register/index');
-        }
+        RegistrationModel::registerNewUser();
+        $this->View->render('register/index');
     }
 
     /**
