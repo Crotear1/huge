@@ -4,7 +4,7 @@
     <?php $this->renderFeedbackMessages(); ?>
 
     <!-- login box on left side -->
-    <div class="login-box" style="width: 50%; display: block;">
+    <div class="login-box" style="width: 50%; display: block; margin-left: auto; margin-right: auto;">
         <h2>Register a new account</h2>
 
         <!-- register form -->
@@ -15,7 +15,6 @@
             <input type="text" name="user_email_repeat" placeholder="repeat email address (to prevent typos)" required />
             <input type="password" name="user_password_new" pattern=".{6,}" placeholder="Password (6+ characters)" required autocomplete="off" />
             <input type="password" name="user_password_repeat" pattern=".{6,}" required placeholder="Repeat your password" autocomplete="off" />
-
 
             <input type="submit" value="Register" />
         </form>

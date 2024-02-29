@@ -7,7 +7,7 @@
         <div class="table-wrapper">
 
             <!-- login box on left side -->
-            <div class="login-box">
+            <div class="login-box login-page-inbox">
                 <h2>Login here</h2>
                 <form action="<?php echo Config::get('URL'); ?>login/login" method="post">
                     <input type="text" name="user_name" placeholder="Username or email" required />
@@ -38,13 +38,14 @@
                     <a href="<?php echo Config::get('URL'); ?>login/requestPasswordReset">I forgot my password</a>
                 </div>
             </div>
-
-            <!-- register box on right side -->
-            <div class="register-box">
-                <h2>No account yet ?</h2>
-                <a href="<?php echo Config::get('URL'); ?>register/index">Register</a>
-            </div>
-
         </div>
     </div>
 </div>
+
+<style>
+.login-page-inbox {
+    width: 50%;
+    display: block;
+    margin: 0 auto;
+}
+</style>
