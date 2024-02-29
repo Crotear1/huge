@@ -379,4 +379,8 @@ class LoginModel
     {
         return Session::userIsLoggedIn();
     }
+
+    public static function isAdmin() {
+        return Session::get('user_account_type') == 7;
+    }
 }

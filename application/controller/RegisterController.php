@@ -22,9 +22,7 @@ class RegisterController extends Controller
      */
     public function index()
     {
-        if (LoginModel::isUserLoggedIn()) {
-            Redirect::home();
-        } else {
+        if (LoginModel::isUserLoggedIn() && LoginModel::isAdmin()) {
             $this->View->render('register/index');
         }
     }
@@ -38,9 +36,7 @@ class RegisterController extends Controller
         $registration_successful = RegistrationModel::registerNewUser();
 
         if ($registration_successful) {
-            Redirect::to('login/index');
-        } else {
-            Redirect::to('register/index');
+            $this->View->render('register/index');
         }
     }
 
