@@ -18,12 +18,14 @@ class RegisterController extends Controller
 
     /**
      * Register page
-     * Show the register form, but redirect to main-page if user is already logged-in
+     * Show the register form, but redirect to login page if user is not logged in
      */
     public function index()
     {
         if (LoginModel::isUserLoggedIn() && LoginModel::isAdmin()) {
             $this->View->render('register/index');
+        } else if (LoginModel::isUserLoggedIn()) {
+            Redirect::to('dashboard/index');
         } else {
             Redirect::to('login/index');
         }
