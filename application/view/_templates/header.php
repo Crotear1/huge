@@ -13,6 +13,11 @@
 
 </head>
 <body>
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
     <!-- wrapper, to center website -->
     <div class="wrapper">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -43,43 +48,36 @@
             <?php } ?>
         </ul>
            <!-- my account -->
-        <ul class="navigation right" style="margin-left: auto;" >
-            <?php if (Session::userIsLoggedIn()) : ?>
-                <li <?php if (View::checkForActiveController($filename, "user")) { echo ' class="active" '; } ?> >
-                    <a href="<?php echo Config::get('URL'); ?>user/index">My Account</a>
-                    <ul class="navigation-submenu">
-                        <li <?php if (View::checkForActiveController($filename, "user")) { echo ' class="active" '; } ?> >
-                            <a href="<?php echo Config::get('URL'); ?>user/changeUserRole">Change account type</a>
-                        </li>
-                        <li <?php if (View::checkForActiveController($filename, "user")) { echo ' class="active" '; } ?> >
-                            <a href="<?php echo Config::get('URL'); ?>user/editAvatar">Edit your avatar</a>
-                        </li>
-                        <li <?php if (View::checkForActiveController($filename, "user")) { echo ' class="active" '; } ?> >
-                            <a href="<?php echo Config::get('URL'); ?>user/editusername">Edit my username</a>
-                        </li>
-                        <li <?php if (View::checkForActiveController($filename, "user")) { echo ' class="active" '; } ?> >
-                            <a href="<?php echo Config::get('URL'); ?>user/edituseremail">Edit my email</a>
-                        </li>
-                        <li <?php if (View::checkForActiveController($filename, "user")) { echo ' class="active" '; } ?> >
-                            <a href="<?php echo Config::get('URL'); ?>user/changePassword">Change Password</a>
-                        </li>
-                        <li <?php if (View::checkForActiveController($filename, "login")) { echo ' class="active" '; } ?> >
-                            <a href="<?php echo Config::get('URL'); ?>login/logout">Logout</a>
-                        </li>
-                    </ul>
-                </li>
-                <?php if (Session::get("user_account_type") == 7) : ?>
-                    <li <?php if (View::checkForActiveController($filename, "admin")) {
-                        echo ' class="active" ';
-                    } ?> >
-                        <a href="<?php echo Config::get('URL'); ?>admin/">Admin</a>
+           <nav class="navbar navbar-expand-lg ml-auto navbar-light bg-light">
+
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav ml-auto">
+                <?php if (Session::userIsLoggedIn()) : ?>
+                    <li class="nav-item dropdown <?php if (View::checkForActiveController($filename, "user")) { echo ' active'; } ?>">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        My Account
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="<?php echo Config::get('URL'); ?>user/changeUserRole">Change account type</a>
+                        <a class="dropdown-item" href="<?php echo Config::get('URL'); ?>user/editAvatar">Edit your avatar</a>
+                        <a class="dropdown-item" href="<?php echo Config::get('URL'); ?>user/editusername">Edit my username</a>
+                        <a class="dropdown-item" href="<?php echo Config::get('URL'); ?>user/edituseremail">Edit my email</a>
+                        <a class="dropdown-item" href="<?php echo Config::get('URL'); ?>user/changePassword">Change Password</a>
+                        <a class="dropdown-item" href="<?php echo Config::get('URL'); ?>login/logout">Logout</a>
+                    </div>
                     </li>
-                    <li <?php if (View::checkForActiveController($filename, "register/index")) { echo ' class="active" '; } ?> >
-                        <a href="<?php echo Config::get('URL'); ?>register/index">Register</a>
+                    <?php if (Session::get("user_account_type") == 7) : ?>
+                    <li class="nav-item <?php if (View::checkForActiveController($filename, "admin")) { echo ' active'; } ?>">
+                        <a class="nav-link" href="<?php echo Config::get('URL'); ?>admin/">Admin</a>
                     </li>
+                    <li class="nav-item <?php if (View::checkForActiveController($filename, "register/index")) { echo ' active'; } ?>">
+                        <a class="nav-link" href="<?php echo Config::get('URL'); ?>register/index">Register</a>
+                    </li>
+                    <?php endif; ?>
                 <?php endif; ?>
-            <?php endif; ?>
-            </ul>
+                </ul>
+            </div>
+            </nav>
         </div>
     </nav>
 
