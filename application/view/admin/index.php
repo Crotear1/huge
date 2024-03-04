@@ -65,15 +65,12 @@ $(document).ready( function () {
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <?php
-                                    $var_dump = array(
-                                        (object) array("RoleID" => 0, "RoleName" => "Gast"),
-                                        (object) array("RoleID" => 1, "RoleName" => "User"),
-                                        (object) array("RoleID" => 7, "RoleName" => "Admin")
-                                    );
+                                        $items = $this->userRoles;
+                                        foreach ($items as $item) {
+                                            echo '<a class="dropdown-item" >'.json_encode($item->RoleName).' </a>';
+                                        }
 
-                                    foreach ($var_dump as $object) {
-                                        echo '<a class="dropdown-item" href="#">' . $object->RoleName . '</a>';
-                                    }
+
                                     ?>
                                 </div>
                             </div>
@@ -81,7 +78,8 @@ $(document).ready( function () {
                         <form action="<?= config::get("URL"); ?>admin/actionAccountSettings" method="post">
                             <td><input type="number" name="suspension" /></td>
                             <td><input type="checkbox" name="softDelete" <?php if ($user->user_deleted) { ?> checked <?php } ?> /></td>
-                            <td>
+                            <td>    echo "<a class='dropdown-item' </a>";
+                                        }
                                 <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
                                 <input type="submit" />
                             </td>
