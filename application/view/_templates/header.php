@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="<?php echo Config::get('URL'); ?>css/style.css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 
+
 </head>
 <body>
     <!-- wrapper, to center website -->
