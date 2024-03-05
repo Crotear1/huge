@@ -1,3 +1,4 @@
+
 <div class="container">
     <h1>ProfileController/index</h1>
     <div class="box">
@@ -5,13 +6,8 @@
         <!-- echo out the system feedback (error and success messages) -->
         <?php $this->renderFeedbackMessages(); ?>
 
-        <h3>What happens here ?</h3>
         <div>
-            This controller/action/view shows a list of all users in the system. You could use the underlying code to
-            build things that use profile information of one or multiple/all users.
-        </div>
-        <div>
-            <table class="overview-table">
+            <table class="overview-table dataTable">
                 <thead>
                 <tr>
                     <td>Id</td>
@@ -20,6 +16,7 @@
                     <td>User's email</td>
                     <td>Activated ?</td>
                     <td>Link to user's profile</td>
+                    <td>Role</td>
                 </tr>
                 </thead>
                 <?php foreach ($this->users as $user) { ?>
@@ -35,6 +32,15 @@
                         <td><?= ($user->user_active == 0 ? 'No' : 'Yes'); ?></td>
                         <td>
                             <a href="<?= Config::get('URL') . 'profile/showProfile/' . $user->user_id; ?>">Profile</a>
+                        </td>
+                        <td>
+                            <?php
+                            $roles = [];
+                            foreach ($this->userRoles as $role) {
+                                $roles[$role->RoleID] = $role;
+                            }
+                            echo $roles[$user->user_account_type]->RoleName;
+                            ?>
                         </td>
                     </tr>
                 <?php } ?>
