@@ -22,12 +22,6 @@ $(document).ready( function () {
         <!-- echo out the system feedback (error and success messages) -->
         <?php $this->renderFeedbackMessages(); ?>
 
-        <h3>What happens here ?</h3>
-
-        <div>
-            This controller/action/view shows a list of all users in the system. with the ability to soft delete a user
-            or suspend a user.
-        </div>
         <div>
             <table class="overview-table dataTable">
                 <thead>
@@ -58,28 +52,27 @@ $(document).ready( function () {
                         <td>
                             <a href="<?= Config::get('URL') . 'profile/showProfile/' . $user->user_id; ?>">Profile</a>
                         </td>
-                        <td>
-                            <div class="dropdown">
-                                <button href="<?= Config::get('URL') . 'profile/showProfile/' . $user->user_account_type; ?>" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <?= $user->user_account_type; ?>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <?php
-                                        $items = $this->userRoles;
-                                        foreach ($items as $item) {
-                                            echo '<a class="dropdown-item" >'.json_encode($item->RoleName).' </a>';
-                                        }
-
-
-                                    ?>
-                                </div>
-                            </div>
-                        </td>
                         <form action="<?= config::get("URL"); ?>admin/actionAccountSettings" method="post">
+                            <td>
+                                <select class="form-select" name="new_role_id" aria-label="Default select example">
+                                <?php
+                                    $roles = [];
+                                    foreach ($this->userRoles as $role) {
+                                        $roles[$role->RoleID] = $role;
+                                    }
+                                    $roleName = $roles[$user->user_account_type]->RoleName;
+                                ?>
+                                    <option selected> <?php echo $roleName; ?> </option>
+                                    <?php
+                                        foreach ($this->userRoles as $role) {
+                                            echo "<option value='$role->RoleID'>$role->RoleName</option>";
+                                        }
+                                    ?>
+                                </select>
+                            </td>
                             <td><input type="number" name="suspension" /></td>
                             <td><input type="checkbox" name="softDelete" <?php if ($user->user_deleted) { ?> checked <?php } ?> /></td>
-                            <td>    echo "<a class='dropdown-item' </a>";
-                                        }
+                            <td>
                                 <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
                                 <input type="submit" />
                             </td>

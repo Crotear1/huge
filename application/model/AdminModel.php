@@ -11,10 +11,10 @@ class AdminModel
      * @param $suspensionInDays
      * @param $softDelete
      * @param $userId
+     * @param $new_role_id
      */
-    public static function setAccountSuspensionAndDeletionStatus($suspensionInDays, $softDelete, $userId)
+    public static function setAccountSuspensionAndDeletionStatus($suspensionInDays, $softDelete, $userId, $new_role_id)
     {
-
         // Prevent to suspend or delete own account.
         // If admin suspend or delete own account will not be able to do any action.
         if ($userId == Session::get('user_id')) {
@@ -43,6 +43,32 @@ class AdminModel
         if ($suspensionTime != null OR $delete = 1) {
             self::resetUserSession($userId);
         }
+
+        // Update the user's role
+        self::updateUserRole($userId, $new_role_id);
+    }
+
+    /**
+     * Update the user's role
+     */
+    private static function updateUserRole($userId, $new_role_id) {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        echo '<script>console.log("'.$new_role_id.'")</script>';
+        $query = $database->prepare("UPDATE users SET user_account_type = :user_account_type WHERE user_id = :user_id LIMIT 1");
+        $query->execute(array(
+            ':user_account_type' => $new_role_id,
+            ':user_id' => $userId
+        ));
+
+        if ($query->rowCount() == 1) {
+            Session::add('feedback_positive', Text::get('FEEDBACK_ACCOUNT_ROLE_CHANGE_SUCCESSFUL'));
+            return true;
+        } else {
+            Session::add('feedback_negative', Text::get('FEEDBACK_ACCOUNT_ROLE_CHANGE_FAILED'));
+            return false;
+        }
+
     }
 
     /**
