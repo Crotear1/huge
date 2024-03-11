@@ -41,7 +41,7 @@
                         </td>
                         <form action="<?= config::get("URL"); ?>admin/actionAccountSettings" method="post">
                             <td>
-                                <select class="form-select" name="new_role_id" aria-label="Default select example">
+                                <select class="form-control" style="width: 100px;" name="new_role_id" aria-label="Default select example">
                                 <?php
                                     $roles = [];
                                     foreach ($this->userRoles as $role) {
@@ -57,11 +57,11 @@
                                     ?>
                                 </select>
                             </td>
-                            <td><input type="number" name="suspension" /></td>
+                            <td><input type="number" class="form-control" name="suspension" /></td>
                             <td><input type="checkbox" name="softDelete" <?php if ($user->user_deleted) { ?> checked <?php } ?> /></td>
                             <td>
                                 <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
-                                <input type="submit" />
+                                <input type="submit" class="btn btn-secondary" />
                             </td>
                         </form>
                     </tr>
