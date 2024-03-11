@@ -52,6 +52,9 @@ $(document).ready( function () {
                 <li class="nav-item <?php if (View::checkForActiveController($filename, "note")) { echo 'active'; } ?>">
                     <a class="nav-link" href="<?php echo Config::get('URL'); ?>note/index">My Notes</a>
                 </li>
+                <li class="nav-item <?php if (View::checkForActiveController($filename, "chat")) { echo 'active'; } ?>">
+                    <a class="nav-link" href="<?php echo Config::get('URL'); ?>message/index">Chat</a>
+                </li>
             <?php } else { ?>
                 <!-- for not logged in users -->
                 <li class="nav-item <?php if (View::checkForActiveControllerAndAction($filename, "login/index")) { echo 'active'; } ?>">
