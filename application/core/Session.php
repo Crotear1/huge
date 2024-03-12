@@ -109,13 +109,15 @@ class Session
         if (isset($userId) && isset($session_id)) {
 
             $database = DatabaseFactory::getFactory()->getConnection();
-            $sql = "SELECT session_id FROM users WHERE user_id = :user_id LIMIT 1";
+            $sql = "SELECT session_id FROM users WHERE user_id = ? LIMIT 1"; // '?' is ein Platzhalter für die spätere Bindung
 
-            $query = $database->prepare($sql);
-            $query->execute(array(":user_id" => $userId));
+            $stmt = $database->prepare($sql);
+            $stmt->bind_param("i", $userId); // Erste Parameter gibt an welche Typen die folgenden Variablen sind
+            $stmt->execute();
 
-            $result = $query->fetch();
-            $userSessionId = !empty($result)? $result->session_id: null;
+            $result = $stmt->get_result(); // get_result() gibt ein Result-Objekt zurück
+            $userSession = $result->fetch_assoc(); // fetch_assoc() gibt ein assoziatives Array zurück
+            $userSessionId = !empty($userSession)? $userSession['session_id']: null;
 
             return $session_id !== $userSessionId;
         }

@@ -34,28 +34,24 @@ class DatabaseFactory
 
     public function getConnection() {
         if (!$this->database) {
-
-            /**
-             * Check DB connection in try/catch block. Also when PDO is not constructed properly,
-             * prevent to exposing database host, username and password in plain text as:
-             * PDO->__construct('mysql:host=127....', 'root', '12345678', Array)
-             * by throwing custom error message
-             */
             try {
-                $options = array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ, PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING);
-                $this->database = new PDO(
-                   Config::get('DB_TYPE') . ':host=' . Config::get('DB_HOST') . ';dbname=' .
-                   Config::get('DB_NAME') . ';port=' . Config::get('DB_PORT') . ';charset=' . Config::get('DB_CHARSET'),
-                   Config::get('DB_USER'), Config::get('DB_PASS'), $options
-                   );
-            } catch (PDOException $e) {
+                $this->database = new mysqli(
+                   Config::get('DB_HOST'),
+                   Config::get('DB_USER'),
+                   Config::get('DB_PASS'),
+                   Config::get('DB_NAME'),
+                   Config::get('DB_PORT')
+                );
 
-                // Echo custom message. Echo error code gives you some info.
-                echo 'Database connection can not be estabilished. Please try again later.' . '<br>';
+                if ($this->database->connect_error) {
+                    throw new Exception('Database connection can not be established. Please try again later.');
+                }
+
+                $this->database->set_charset(Config::get('DB_CHARSET'));
+
+            } catch (Exception $e) {
+                echo $e->getMessage();
                 echo 'Error code: ' . $e->getCode();
-
-                // Stop application :(
-                // No connection, reached limit connections etc. so no point to keep it running
                 exit;
             }
         }
