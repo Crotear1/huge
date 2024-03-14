@@ -26,10 +26,17 @@ class MessageController extends Controller
       );
     }
 
-    public function getMessagesForUser($userId)
+    public function getMessagesForUser($otherUserId, $userId)
     {
         $this->View->render('message/index', array(
-          'messages' => MessageModel::getAllMessages($userId))
+          'messages' => MessageModel::getAllMessages($otherUserId, $userId))
+      );
+    }
+
+    public function create($receiverId, $senderId, $message)
+    {
+        $this->View->render('message/index', array(
+          'messages' => MessageModel::createMessage($receiverId, $senderId, $message))
       );
     }
 

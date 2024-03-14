@@ -20,36 +20,36 @@ class MessageModel
       * Get all the messages
       * @return array an array with several objects (the results)
       */
-    public static function getAllMessages($userId)
+    public static function getAllMessages($otherUserId, $userId)
     {
         $database = DatabaseFactory::getFactory()->getConnection();
-
-        $sql = "SELECT message_id, user_id, message_text, message_image, message_created_at FROM messages WHERE user_id = $userId";
+        $sql = "SELECT id, sender_id, receiver_id, message, Viewed, timestamp FROM messages WHERE sender_id = $userId AND receiver_id = $otherUserId";
         $query = $database->prepare($sql);
         $query->execute();
         return $query->fetchAll();
     }
 
     /**
-     * Set a message as read
-     * @param int $message_id id of the specific message
-     * @return bool feedback (was the message marked as read?)
+     * Set a message (create a new one)
+     * @param int $receiverId id of the receiver
+     * @param int $senderId id of the sender
+     * @param string $message message that will be created
+     * @return bool feedback (was the message created properly ?)
      */
-    public static function createMessage($message_text)
+    public static function createMessage($receiverId, $senderId, $message)
     {
-        if (!$message_text || strlen($message_text) == 0) {
+        if (!$message || strlen($message) == 0) {
             Session::add('feedback_negative', Text::get('FEEDBACK_MESSAGE_CREATION_FAILED'));
             return false;
         }
 
         $database = DatabaseFactory::getFactory()->getConnection();
 
-        $sql = "INSERT INTO messages (message_text, message_image, message_created_at, user_id) VALUES (:message_text, :message_image, :message_created_at, :user_id)";
+        $sql = "INSERT INTO messages (sender_id, receiver_id, message) VALUES (:sender_id, :receiver_id, :message)";
         $query = $database->prepare($sql);
-        $query->execute(array(':message_text' => $message_text, ':message_image' => '', ':message_created_at' => time(), ':user_id' => Session::get('user_id')));
+        $query->execute(array(':sender_id' => $senderId, ':receiver_id' => $receiverId, ':message' => $message));
 
         if ($query->rowCount() == 1) {
-            Session::add('feedback_positive', Text::get('FEEDBACK_MESSAGE_CREATION_SUCCESSFUL'));
             return true;
         }
 
