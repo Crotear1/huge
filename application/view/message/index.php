@@ -1,4 +1,7 @@
 <div class="container">
+  <div style="text-align: right; margin-bottom: 15px;">
+    <button class="btn-primary" id="reload" >Lade Nachrichten</button>
+  </div>
   <div class="row">
     <div class="col-2">
       <table class="table">
@@ -32,6 +35,8 @@
                 // Get all buttons
                 const buttons = document.querySelectorAll('.btn');
 
+                const reloadButton = document.getElementById('reload');
+
                 let messages = [];
 
                 // Function to render the messages
@@ -45,13 +50,31 @@
 
                         if(message.sender_id == userId) {
                             div.style.textAlign = 'right';
-                            div.classList.add('text-right', 'bg-light');
+                            div.classList.add('text-left', 'bg-light');
 
                         } else {
                             div.style.textAlign = 'left';
-                            div.classList.add('text-left', 'bg-success');
+                            div.classList.add('text-right', 'bg-primary', 'text-white');
                         }
                         cardBody.appendChild(div);
+                    });
+
+                  // Scroll to the bottom of the chat
+                  cardBody.scrollTop = cardBody.scrollHeight;
+                }
+
+                reloadButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    getMessages();
+                });
+
+                function getMessages() {
+                    fetch(`<?= Config::get('URL'); ?>message/getMessagesForUser/${userId}/<?= Session::get('user_id'); ?>`)
+                        .then(response => response.json())
+                        .then(data => {
+                            messages = data;
+                            renderMessages();
+                          console.log(data);
                     });
                 }
 
@@ -60,34 +83,21 @@
                     button.addEventListener('click', (event) => {
                         // Get the user id from the button
                         userId = event.target.getAttribute('data-user-id'); // Set the user id to a variable
-                        console.log(`Button clicked for user id: ${userId}`);
-
-                        // todo - fetch the chat messages for the user id
-                        fetch(`<?= Config::get('URL'); ?>message/getMessagesForUser/${userId}/<?= Session::get('user_id'); ?>`)
-                            .then(response => response.json())
-                            .then(data => {
-                                messages = data;
-                                console.log(data);
-                                renderMessages();
-                        });
+                        getMessages()
                     });
                 });
+
 
                 document.querySelector('form').addEventListener('submit', function(event) {
                     event.preventDefault();
 
-                    // Ihr Code zum Senden der Nachricht geht hier hin
                     let message = document.getElementById('message').value;
-                    console.log(`Nachricht: ${message}`);
-                    console.log(`Empfänger: ${userId}`)
-                    console.log(`Sender: <?= Session::get('user_id'); ?>`);
 
                     if(message.length > 0 && userId !== undefined) {
                         fetch(`<?= Config::get('URL'); ?>message/create/${userId}/<?= Session::get('user_id'); ?>/${message}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log(data);
-                        });
+                        getMessages();
+
+                        document.getElementById('message').value = '';
                     }
                 });
             });
