@@ -28,9 +28,7 @@ class MessageController extends Controller
 
     public function getMessagesForUser($otherUserId, $userId)
     {
-        $this->View->render('message/index', array(
-          'messages' => MessageModel::getAllMessages($otherUserId, $userId))
-      );
+        $this->View->renderJSON(MessageModel::getAllMessages($otherUserId, $userId));
     }
 
     public function create($receiverId, $senderId, $message)

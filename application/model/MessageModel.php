@@ -26,7 +26,21 @@ class MessageModel
         $sql = "SELECT id, sender_id, receiver_id, message, Viewed, timestamp FROM messages WHERE sender_id = $userId AND receiver_id = $otherUserId";
         $query = $database->prepare($sql);
         $query->execute();
-        return $query->fetchAll();
+        $chat1 = $query->fetchAll();
+
+        $sql = "SELECT id, sender_id, receiver_id, message, Viewed, timestamp FROM messages WHERE sender_id = $otherUserId AND receiver_id = $userId";
+        $query = $database->prepare($sql);
+        $query->execute();
+        $chat2 = $query->fetchAll();
+
+        $chat = array_merge($chat1, $chat2);
+
+        usort($chat, function($a, $b) {
+            return $a->id <=> $b->id;
+        });
+
+
+        return $chat;
     }
 
     /**
@@ -45,7 +59,7 @@ class MessageModel
 
         $database = DatabaseFactory::getFactory()->getConnection();
 
-        $sql = "INSERT INTO messages (sender_id, receiver_id, message) VALUES (:sender_id, :receiver_id, :message)";
+        $sql = "INSERT INTO messages (sender_id, receiver_id, message, timestamp) VALUES (:sender_id, :receiver_id, :message, NOW())";
         $query = $database->prepare($sql);
         $query->execute(array(':sender_id' => $senderId, ':receiver_id' => $receiverId, ':message' => $message));
 
