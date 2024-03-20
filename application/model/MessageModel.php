@@ -16,8 +16,21 @@ class MessageModel
         return $query->fetchAll();
     }
 
+    /**
+     * Get foreach user the amount of unread messages
+     */
+    public static function getUnreadMessages($userId){
+        $database = DatabaseFactory::getFactory()->getConnection();
+        $sql = "SELECT sender_id, COUNT(Viewed) as unread FROM messages WHERE receiver_id = $userId AND Viewed = 0 GROUP BY sender_id";
+        $query = $database->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
      /**
-      * Get all the messages
+      * Get all the messages & set them to viewed
+        * @param int $otherUserId id of the other user
+        * @param int $userId id of the user
       * @return array an array with several objects (the results)
       */
     public static function getAllMessages($otherUserId, $userId)
@@ -39,6 +52,9 @@ class MessageModel
             return $a->id <=> $b->id;
         });
 
+        $sql = "UPDATE messages SET Viewed = 1 WHERE sender_id = $otherUserId AND receiver_id = $userId";
+        $query = $database->prepare($sql);
+        $query->execute();
 
         return $chat;
     }
@@ -73,5 +89,3 @@ class MessageModel
     }
 
 }
-
-?>

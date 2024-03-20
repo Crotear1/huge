@@ -22,8 +22,8 @@ class MessageController extends Controller
     public function index()
     {
         $this->View->render('message/index', array(
-          'users' => MessageModel::getAllUsers(Session::get('user_id')))
-      );
+          'users' => MessageModel::getAllUsers(Session::get('user_id')), 'getUnreadMessages' => MessageModel::getUnreadMessages(Session::get('user_id'))
+        ));
     }
 
     public function getMessagesForUser($otherUserId, $userId)

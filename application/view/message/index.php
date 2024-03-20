@@ -1,14 +1,24 @@
 <div class="container">
   <div style="text-align: right; margin-bottom: 15px;">
+    <!-- Button to reload the messages -->
     <button class="btn-primary" id="reload" >Lade Nachrichten</button>
   </div>
   <div class="row">
     <div class="col-2">
       <table class="table">
         <tbody>
+        <!-- Loop through all users and display them -->
         <?php foreach ($this->users as $user) { ?>
           <tr>
-            <td><button class="btn" style="width: 120px;" data-user-id="<?= $user->user_id; ?>"><?= $user->user_name; ?></button></td>
+            <td>
+              <button class="btn" style="width: 120px; " data-user-id="<?= $user->user_id; ?>"><?= $user->user_name; ?>
+                <?php foreach ($this->getUnreadMessages as $unread) { ?>
+                    <?php if($unread->sender_id == $user->user_id) { ?>
+                      <span class="badge badge-primary" ><?= $unread->unread; ?></span>
+                    <?php } ?>
+                  <?php } ?>
+              </button>
+            </td>
           </tr>
         <?php } ?>
         </tbody>
@@ -32,9 +42,10 @@
                 document.addEventListener('DOMContentLoaded', (event) => {
                 let userId = undefined;
 
-                // Get all buttons
+                // Get all chat buttons
                 const buttons = document.querySelectorAll('.btn');
 
+                // Get the reload button
                 const reloadButton = document.getElementById('reload');
 
                 let messages = [];
