@@ -5,18 +5,18 @@
   </div>
   <div class="row">
     <div class="col-2">
-    <div class="btn-group-vertical" role="group" aria-label="User buttons">
-      <?php foreach ($this->users as $user) { ?>
-          <button class="chat-btn btn btn-secondary" style="width: 150px;" data-user-id="<?= $user->user_id; ?>">
-              <?= $user->user_name; ?>
-              <?php foreach ($this->getUnreadMessages as $unread) { ?>
-                  <?php if($unread->sender_id == $user->user_id) { ?>
-                      <span class="badge badge-primary"><?= $unread->unread; ?></span>
-                  <?php } ?>
-              <?php } ?>
-          </button>
-      <?php } ?>
-    </div>
+      <div class="btn-group-vertical" role="group" aria-label="User buttons">
+        <?php foreach ($this->users as $user) { ?>
+            <button class="chat-btn btn btn-secondary d-flex justify-content-between" style="width: 120px;" data-user-id="<?= $user->user_id; ?>">
+                <?= $user->user_name; ?>
+                <?php foreach ($this->getUnreadMessages as $unread) { ?>
+                    <?php if($unread->sender_id == $user->user_id) { ?>
+                        <span class="badge badge-pill badge-primary ml-auto"><?= $unread->unread; ?></span>
+                    <?php } ?>
+                <?php } ?>
+            </button>
+        <?php } ?>
+      </div>
     </div>
     <div class="col-10">
       <div class="card">
@@ -91,7 +91,6 @@
                         .then(data => {
                             messages = data;
                             renderMessages();
-                          console.log(data);
                     });
                 }
 
