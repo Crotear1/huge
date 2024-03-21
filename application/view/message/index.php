@@ -102,6 +102,11 @@
                         userId = event.target.getAttribute('data-user-id'); // Set the user id to a variable
                         chatName.innerHTML = event.target.innerHTML; // Set the chat name
                         getMessages()
+                        <?php foreach ($this->getUnreadMessages as $unread) { ?>
+                            if(userId == <?= $unread->sender_id; ?>) {
+                                event.target.querySelector('span').remove();
+                            }
+                        <?php } ?>
                     });
                 });
 

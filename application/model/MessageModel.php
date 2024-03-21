@@ -48,8 +48,9 @@ class MessageModel
 
         $chat = array_merge($chat1, $chat2);
 
+        // Sort the chat by timestamp
         usort($chat, function($a, $b) {
-            return $a->id <=> $b->id;
+            return $a->timestamp <=> $b->timestamp;
         });
 
         $sql = "UPDATE messages SET Viewed = 1 WHERE sender_id = $otherUserId AND receiver_id = $userId";
