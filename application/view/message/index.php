@@ -1,31 +1,28 @@
 <div class="container">
   <div style="text-align: right; margin-bottom: 15px;">
     <!-- Button to reload the messages -->
-    <button class="btn-primary" id="reload" >Lade Nachrichten</button>
+    <button type="button" class="btn btn-secondary" id="reload" >Lade Nachrichten</button>
   </div>
   <div class="row">
     <div class="col-2">
-      <table class="table">
-        <tbody>
-        <!-- Loop through all users and display them -->
-        <?php foreach ($this->users as $user) { ?>
-          <tr>
-            <td>
-              <button class="btn" style="width: 120px; " data-user-id="<?= $user->user_id; ?>"><?= $user->user_name; ?>
-                <?php foreach ($this->getUnreadMessages as $unread) { ?>
-                    <?php if($unread->sender_id == $user->user_id) { ?>
-                      <span class="badge badge-primary" ><?= $unread->unread; ?></span>
-                    <?php } ?>
+    <div class="btn-group-vertical" role="group" aria-label="User buttons">
+      <?php foreach ($this->users as $user) { ?>
+          <button class="chat-btn btn btn-secondary" style="width: 150px;" data-user-id="<?= $user->user_id; ?>">
+              <?= $user->user_name; ?>
+              <?php foreach ($this->getUnreadMessages as $unread) { ?>
+                  <?php if($unread->sender_id == $user->user_id) { ?>
+                      <span class="badge badge-primary"><?= $unread->unread; ?></span>
                   <?php } ?>
-              </button>
-            </td>
-          </tr>
-        <?php } ?>
-        </tbody>
-      </table>
+              <?php } ?>
+          </button>
+      <?php } ?>
+    </div>
     </div>
     <div class="col-10">
       <div class="card">
+        <div class="card-header">
+          Chat mit <span id="chatName" ></span>
+        </div>
         <!-- Chat -->
         <div class="card-body" style="height: 500px; overflow-y: auto;">
 
@@ -34,7 +31,7 @@
             <form method="post" action="<?php echo Config::get('URL');?>message/create">
               <div class="form-group" style="display: flex; justify-content: space-between; align-items: center; margin-left: 10px; margin-right: 10px;">
                   <input type="text" class="form-control" id="message" name="message" placeholder="Nachricht eingeben" style="flex-grow: 1; margin-right: 10px;">
-                  <button>Senden</button>
+                  <button class="btn btn-secondary" >Senden</button>
               </div>
             </form>
             <script>
@@ -42,37 +39,46 @@
                 document.addEventListener('DOMContentLoaded', (event) => {
                 let userId = undefined;
 
+                // Get the chat name
+                let chatName = document.getElementById('chatName');
+
                 // Get all chat buttons
-                const buttons = document.querySelectorAll('.btn');
+                const buttons = document.querySelectorAll('.chat-btn');
 
                 // Get the reload button
                 const reloadButton = document.getElementById('reload');
 
                 let messages = [];
 
-                // Function to render the messages
+                /**
+                 * Render the messages
+                 * @returns void
+                 */
                 function renderMessages() {
-                    const cardBody = document.querySelector('.card-body');
-                    cardBody.innerHTML = '';
+                  const cardBody = document.querySelector('.card-body');
+                  cardBody.innerHTML = '';
 
-                    messages.forEach((message) => {
-                        const div = document.createElement('div');
-                        div.innerHTML = message.message;
+                  messages.forEach((message) => {
+                      const div = document.createElement('div');
+                      const p = document.createElement('p');
+                      p.innerHTML = message.message;
+                      p.classList.add('mb-0');
 
-                        if(message.sender_id == userId) {
-                            div.style.textAlign = 'right';
-                            div.classList.add('text-left', 'bg-light');
+                      if(message.sender_id == userId) {
+                          div.classList.add('d-flex', 'justify-content-start', 'my-1');
+                          p.classList.add('py-2', 'px-3', 'rounded', 'bg-primary', 'text-white');
+                      } else {
+                          div.classList.add('d-flex', 'justify-content-end', 'my-1');
+                          p.classList.add('py-2', 'px-3', 'rounded', 'bg-light');
+                      }
 
-                        } else {
-                            div.style.textAlign = 'left';
-                            div.classList.add('text-right', 'bg-primary', 'text-white');
-                        }
-                        cardBody.appendChild(div);
-                    });
+                      div.appendChild(p);
+                      cardBody.appendChild(div);
+                  });
 
                   // Scroll to the bottom of the chat
                   cardBody.scrollTop = cardBody.scrollHeight;
-                }
+              }
 
                 reloadButton.addEventListener('click', (event) => {
                     event.preventDefault();
@@ -94,6 +100,7 @@
                     button.addEventListener('click', (event) => {
                         // Get the user id from the button
                         userId = event.target.getAttribute('data-user-id'); // Set the user id to a variable
+                        chatName.innerHTML = event.target.innerHTML; // Set the chat name
                         getMessages()
                     });
                 });
