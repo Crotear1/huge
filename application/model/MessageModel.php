@@ -10,8 +10,9 @@ class MessageModel
     {
         $database = DatabaseFactory::getFactory()->getConnection();
 
-        $sql = "SELECT user_id, user_name FROM users WHERE user_id != $userId";
+        $sql = "CALL GetAllUsers(?)";
         $query = $database->prepare($sql);
+        $query->bindParam(1, $userId, PDO::PARAM_INT);
         $query->execute();
         return $query->fetchAll();
     }
@@ -19,10 +20,13 @@ class MessageModel
     /**
      * Get foreach user the amount of unread messages
      */
-    public static function getUnreadMessages($userId){
+    public static function getUnreadMessages($userId)
+    {
         $database = DatabaseFactory::getFactory()->getConnection();
-        $sql = "SELECT sender_id, COUNT(Viewed) as unread FROM messages WHERE receiver_id = $userId AND Viewed = 0 GROUP BY sender_id";
+
+        $sql = "CALL GetUnreadMessages(?)";
         $query = $database->prepare($sql);
+        $query->bindParam(1, $userId, PDO::PARAM_INT);
         $query->execute();
         return $query->fetchAll();
     }
@@ -76,9 +80,12 @@ class MessageModel
 
         $database = DatabaseFactory::getFactory()->getConnection();
 
-        $sql = "INSERT INTO messages (sender_id, receiver_id, message, timestamp) VALUES (:sender_id, :receiver_id, :message, NOW())";
+        $sql = "CALL CreateMessage(?, ?, ?)";
         $query = $database->prepare($sql);
-        $query->execute(array(':sender_id' => $senderId, ':receiver_id' => $receiverId, ':message' => $message));
+        $query->bindParam(1, $senderId, PDO::PARAM_INT);
+        $query->bindParam(2, $receiverId, PDO::PARAM_INT);
+        $query->bindParam(3, $message, PDO::PARAM_STR);
+        $query->execute();
 
         if ($query->rowCount() == 1) {
             return true;
