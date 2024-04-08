@@ -211,4 +211,24 @@ class CloudModel
         return $images;
       }
 
+      public function displayImage($imagePath) {
+        // Überprüfen Sie, ob die Datei existiert und lesbar ist
+        if (file_exists($imagePath) && is_readable($imagePath)) {
+            // Holen Sie sich den MIME-Typ des Bildes
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $imagePath);
+            finfo_close($finfo);
+
+            // Setzen Sie den Content-Type auf den MIME-Typ des Bildes
+            header("Content-Type: $mimeType");
+
+            // Lesen Sie die Bilddatei und senden Sie den Inhalt an den Browser
+            readfile($imagePath);
+        } else {
+            // Die Datei konnte nicht gefunden werden oder ist nicht lesbar
+            http_response_code(404);
+            echo "File not found.";
+        }
+    }
+
 }

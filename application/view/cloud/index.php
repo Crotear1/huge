@@ -17,14 +17,16 @@
     <h3>My Pictures</h3>
 
     <?php if ($this->images) { ?>
-    <div class="images">
-        <?php foreach ($this->images as $image) { ?>
-            <div class="image">
-                <img src="<?php echo Config::get('URL') . $image->image_path; ?>" alt="User Image">
-            </div>
+        <div class="row">
+            <?php foreach ($this->images as $image) { ?>
+                <div class="col-md-3">
+                    <img src="<?php echo Config::get('URL') . $image->file_path; ?>" class="img-fluid">
+                </div>
+            <?php } ?>
+        </div>
+    <?php } else { ?>
+
+        <p>You have not uploaded any pictures yet.</p>
         <?php } ?>
-    </div>
-  <?php } else { ?>
-      <p>You have not uploaded any pictures yet.</p>
-  <?php } ?>
+
 </div>
