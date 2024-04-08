@@ -41,6 +41,12 @@ return array(
     'PATH_CONTROLLER' => realpath(dirname(__FILE__).'/../../') . '/application/controller/',
     'PATH_VIEW' => realpath(dirname(__FILE__).'/../../') . '/application/view/',
     /**
+     * Configuration for: Cloud Paths
+     * Internal path to save images. Make sure this folder is writable. The slash at the end is VERY important!
+     */
+    'PATH_USER_FOLDER' => realpath(dirname(__FILE__).'/../../') . '/user_folder',
+
+    /**
      * Configuration for: Avatar paths
      * Internal path to save avatars. Make sure this folder is writable. The slash at the end is VERY important!
      */
