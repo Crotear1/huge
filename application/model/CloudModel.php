@@ -25,35 +25,6 @@ class CloudModel
       }
   }
 
- /**
-     * Checks if the avatar folder exists and is writable
-     *
-     * @return bool success status
-     */
-    public static function isAvatarFolderWritable()
-    {
-        if (is_dir(Config::get('PATH_AVATARS')) AND is_writable(Config::get('PATH_AVATARS'))) {
-            return true;
-        }
-
-        Session::add('feedback_negative', Text::get('FEEDBACK_AVATAR_FOLDER_DOES_NOT_EXIST_OR_NOT_WRITABLE'));
-        return false;
-    }
-
-
-    /**
-     * Writes marker to database, saying user has an avatar now
-     *
-     * @param $user_id
-     */
-    public static function writeAvatarToDatabase($user_id)
-    {
-        $database = DatabaseFactory::getFactory()->getConnection();
-
-        $query = $database->prepare("UPDATE users SET user_has_avatar = TRUE WHERE user_id = :user_id LIMIT 1");
-        $query->execute(array(':user_id' => $user_id));
-    }
-
     /**
      * Upload picture into the folder
      * @param int $userId
@@ -76,39 +47,16 @@ class CloudModel
         move_uploaded_file($_FILES['file']['tmp_name'], $filePath);
     }
 
-    /**
-     * Get all images by user id
-     * @param int $userId
-     * @return array
-     */
-    public static function getImagesByUserId($userId){
-        $basePath = Config::get('PATH_USER_FOLDER');
-
-        // Append the user id to the base path
-        $userFolderPath = $basePath . DIRECTORY_SEPARATOR . $userId;
-
-        // // Get all files in the folder
-        // $files = scandir($userFolderPath);
-        header('Content-type: image/jpeg');
-        $images = readfile($userFolderPath);
-
-        return $images;
-      }
-
     public static function getAllImageNames($userId){
         $basePath = Config::get('PATH_USER_FOLDER');
 
-        // Append the user id to the base path
         $userFolderPath = $basePath . DIRECTORY_SEPARATOR . $userId;
 
-        // Get all files in the folder
         $files = scandir($userFolderPath);
 
-        // Filter out any non-image files
-        // $imageFiles = array_filter($files, function($file) {
-        //     $ext = pathinfo($file, PATHINFO_EXTENSION);
-        //     return in_array($ext, ['jpg', 'jpeg', 'png', 'gif']);
-        // });
+        // Remove the first two elements from the array
+        unset($files[0]);
+        unset($files[1]);
 
         return $files;
     }
@@ -133,25 +81,35 @@ class CloudModel
         unlink($userFolderPath);
     }
 
-    public static function moveImageToPublic($userId, $fileName){
-        $basePath = Config::get('PATH_USER_FOLDER');
+    public static function writeImageToDatabase($userId, $fileName){
+        $db = DatabaseFactory::getFactory()->getConnection();
 
-        // Append the user id to the base path
-        $userFolderPath = $basePath . DIRECTORY_SEPARATOR . $userId . DIRECTORY_SEPARATOR . $fileName;
-
-        $newPath = Config::get('PATH_PUBLIC_FOLDER') . DIRECTORY_SEPARATOR . $fileName;
-
-        // move to the public folder and remove the file from the user folder and note it and the database
-        rename($userFolderPath, $newPath);
-
-        $database = DatabaseFactory::getFactory()->getConnection();
-
-        $query = $database->prepare("UPDATE images SET is_public = TRUE WHERE user_id = :user_id AND image_name = :image_name LIMIT 1");
-
-        $query->execute(array(':user_id' => $userId, ':image_name' => $fileName));
+        $query = $db->prepare("INSERT INTO Images (userid, imageName) VALUES (:userid, :imageName)");
+        $query->execute(array(':userid' => $userId, ':imageName' => $fileName));
 
 
     }
 
 
+    public static function checkIfSharedImageExists($userId, $imageName){
+        $db = DatabaseFactory::getFactory()->getConnection();
+
+        $query = $db->prepare("SELECT * FROM Images WHERE userid = :userid AND imageName = :imageName");
+        $query->execute(array(':userid' => $userId, ':imageName' => $imageName));
+
+        if($query->rowCount() > 0){
+            self::showImages($userId, $imageName);
+        } else {
+            Redirect::to('cloud/index');
+        }
+    }
+
+    public static function removeSharedImage($imageName){
+        $db = DatabaseFactory::getFactory()->getConnection();
+
+        $id = Session::get('user_id');
+
+        $query = $db->prepare("DELETE FROM Images WHERE imageName = :imageName AND userid = :id");
+        $query->execute(array(':imageName' => $imageName, ':id' => $id));
+    }
 }

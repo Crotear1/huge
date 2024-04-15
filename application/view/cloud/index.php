@@ -1,5 +1,3 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
 <div class="box mt-2 card p-2">
     <h3>Bilder hochladen</h3>
 
@@ -50,9 +48,9 @@
                             <div class="card-image-hover">
                                 <img src="<?php echo Config::get('URL')?>cloud/showImages/<?php echo $imageName; ?>" class="card-img-top img-fluid">
                                 <div class="card-hover-buttons">
-                                    <form action="<?php echo Config::get('URL'); ?>cloud/shareImage/<?php echo $imageName;?>" method="post" enctype="multipart/form-data">
-                                        <input type="hidden" name="imageName" value="<?php echo $imageName; ?>">
-                                        <button type="submit" class="btn btn-success"><i class="fa fa-share"></i></button>
+                                    <form class="myForm" action="<?php echo Config::get('URL'); ?>cloud/shareImage/<?php echo $imageName;?>" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" class="myInput" name="imageName" value="<?php echo $imageName; ?>">
+                                        <button type="submit" class="btn btn-success copyBtn" onclick="event.preventDefault(); copyToClipboard('<?php echo Session::get('user_id') ?>', '<?php echo $imageName; ?>', this.parentElement)"><i class="fa fa-share"></i></button>
                                     </form>
                                     <form action="<?php echo Config::get('URL'); ?>cloud/deleteImage/<?php echo $imageName;?>" method="post" enctype="multipart/form-data">
                                         <input type="hidden" name="imageName" value="<?php echo $imageName; ?>">
@@ -67,3 +65,16 @@
         </div>
     </div>
 </div>
+
+<script>
+function copyToClipboard(userId, imageName, form) {
+    var url = "<?php echo Config::get('URL'); ?>";
+    var fullUrl = url + "cloud/shared/" + userId + "/" + imageName;
+
+    navigator.clipboard.writeText(fullUrl);
+
+    alert("Copied the text: " + fullUrl);
+
+    form.submit();
+}
+</script>

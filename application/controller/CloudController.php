@@ -29,6 +29,11 @@ class CloudController extends Controller
         ));
     }
 
+    public function shared()
+    {
+        $this->View->render('cloud/shared');
+    }
+
     public function showImages($imageName)
     {
         $this->View->render('cloud/index', array(
@@ -56,7 +61,16 @@ class CloudController extends Controller
      * Makes the image public
      */
     public function shareImage($imageName){
-        CloudModel::moveImageToPublic(Session::get('user_id'), $imageName);
+        CloudModel::writeImageToDatabase(Session::get('user_id'), $imageName);
+        Redirect::to('cloud/index');
+    }
+
+    public function checkIfSharedImageExists($userId, $imageName){
+        CloudModel::checkIfSharedImageExists($userId, $imageName);
+    }
+
+    public function removeSharedImage($imageName){
+        CloudModel::removeSharedImage($imageName);
         Redirect::to('cloud/index');
     }
 
