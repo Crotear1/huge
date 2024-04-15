@@ -25,8 +25,14 @@ class CloudController extends Controller
     {
         $this->View->render('cloud/index', array(
             'createUserFolder' => CloudModel::createUserFolder(Session::get('user_id')),
-            'images' => CloudModel::getImagesByUserId(Session::get('user_id'))
+            'imageNames' => CloudModel::getAllImageNames(Session::get('user_id')),
+        ));
+    }
 
+    public function showImages($imageName)
+    {
+        $this->View->render('cloud/index', array(
+            'images' => CloudModel::showImages(Session::get('user_id'), $imageName),
         ));
     }
 
@@ -38,22 +44,4 @@ class CloudController extends Controller
         Redirect::to('cloud/index');
     }
 
-    // /**
-    //  * Perform the upload of the avatar
-    //  * POST-request
-    //  */
-    // public function uploadAvatar_action()
-    // {
-    //     AvatarModel::createAvatar();
-    //     Redirect::to('user/editAvatar');
-    // }
-
-    // /**
-    //  * Delete the current user's avatar
-    //  */
-    // public function deleteAvatar_action()
-    // {
-    //     AvatarModel::deleteAvatar(Session::get("user_id"));
-    //     Redirect::to('user/editAvatar');
-    // }
 }
