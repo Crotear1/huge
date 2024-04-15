@@ -19,7 +19,7 @@ class CloudController extends Controller
     }
 
     /**
-     * Show user's PRIVATE profile
+     * The "index" action, shows the "cloud" page
      */
     public function index()
     {
@@ -41,6 +41,22 @@ class CloudController extends Controller
      */
     public function upload(){
         CloudModel::uploadPicture(Session::get('user_id'));
+        Redirect::to('cloud/index');
+    }
+
+    /**
+     * Delete a picture
+     */
+    public function deleteImage($imageName){
+        CloudModel::deletePicture(Session::get('user_id'), $imageName);
+        Redirect::to('cloud/index');
+    }
+
+    /**
+     * Makes the image public
+     */
+    public function shareImage($imageName){
+        CloudModel::moveImageToPublic(Session::get('user_id'), $imageName);
         Redirect::to('cloud/index');
     }
 

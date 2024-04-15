@@ -124,5 +124,34 @@ class CloudModel
         return $images;
     }
 
+    public static function deletePicture($userId, $fileName){
+        $basePath = Config::get('PATH_USER_FOLDER');
+
+        // Append the user id to the base path
+        $userFolderPath = $basePath . DIRECTORY_SEPARATOR . $userId . DIRECTORY_SEPARATOR . $fileName;
+
+        unlink($userFolderPath);
+    }
+
+    public static function moveImageToPublic($userId, $fileName){
+        $basePath = Config::get('PATH_USER_FOLDER');
+
+        // Append the user id to the base path
+        $userFolderPath = $basePath . DIRECTORY_SEPARATOR . $userId . DIRECTORY_SEPARATOR . $fileName;
+
+        $newPath = Config::get('PATH_PUBLIC_FOLDER') . DIRECTORY_SEPARATOR . $fileName;
+
+        // move to the public folder and remove the file from the user folder and note it and the database
+        rename($userFolderPath, $newPath);
+
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        $query = $database->prepare("UPDATE images SET is_public = TRUE WHERE user_id = :user_id AND image_name = :image_name LIMIT 1");
+
+        $query->execute(array(':user_id' => $userId, ':image_name' => $fileName));
+
+
+    }
+
 
 }
