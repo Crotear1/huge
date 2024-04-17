@@ -18,7 +18,7 @@
 ?>
 
 <div class="card mx-auto" style="width: 50rem;">
-  <img src="<?php echo $sharedImage?>" class="card-img-top img-fluid rounded">
+<img src="<?php echo $sharedImage?>" class="card-img-top img-fluid rounded" onerror="this.onerror=null; window.location.href='/framework/ITL1_2/vendor/panique/huge/cloud/index';">
   <div class="card-body">
     <h5 class="card-title">Shared Image</h5>
     <?php if(Session::get('user_id') == $id): ?>
