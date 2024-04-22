@@ -74,4 +74,9 @@ class CloudController extends Controller
         Redirect::to('cloud/index');
     }
 
+    public function sendEmail($imageName){
+        CloudModel::sendEmail($imageName);
+        Redirect::to('cloud/index');
+    }
+
 }

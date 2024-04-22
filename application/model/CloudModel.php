@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CloudController
  * Controls everything that is user-related
@@ -111,5 +110,16 @@ class CloudModel
 
         $query = $db->prepare("DELETE FROM Images WHERE imageName = :imageName AND userid = :id");
         $query->execute(array(':imageName' => $imageName, ':id' => $id));
+    }
+
+    public static function sendEmail($imageName){
+        $mail = new Mail();
+        $success = $mail->sendMail($_POST['email'], Config::get('EMAIL_SMTP_USERNAME'), 'Charlie', 'subject', $imageName);
+
+        if($success){
+            echo Session::add('feedback_positive', 'Email wurde erfolgreich versendet');
+        } else {
+            echo Session::add('feedback_negative', $mail->getError());
+        }
     }
 }

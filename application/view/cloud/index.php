@@ -8,6 +8,8 @@
     </form>
 </div>
 
+<?php $this->renderFeedbackMessages(); ?>
+
 <style>
     .card-image-hover {
         position: relative;
@@ -43,18 +45,23 @@
         <div class="card-body">
             <div class="row">
                 <?php foreach($this->imageNames as $imageName): ?>
-                    <div class="col-md-3 mb-4">
+                    <div class="col-md-4 mb-4">
                         <div class="card">
                             <div class="card-image-hover">
                                 <img src="<?php echo Config::get('URL')?>cloud/showImages/<?php echo $imageName; ?>" class="card-img-top img-fluid">
                                 <div class="card-hover-buttons">
-                                    <form class="myForm" action="<?php echo Config::get('URL'); ?>cloud/shareImage/<?php echo $imageName;?>" method="post" enctype="multipart/form-data">
+                                    <!-- <form class="myForm" action="<?php echo Config::get('URL'); ?>cloud/shareImage/<?php echo $imageName;?>" method="post" enctype="multipart/form-data">
                                         <input type="hidden" class="myInput" name="imageName" value="<?php echo $imageName; ?>">
                                         <button type="submit" class="btn btn-success copyBtn" onclick="event.preventDefault(); copyToClipboard('<?php echo Session::get('user_id') ?>', '<?php echo $imageName; ?>', this.parentElement)"><i class="fa fa-share"></i></button>
                                     </form>
                                     <form action="<?php echo Config::get('URL'); ?>cloud/deleteImage/<?php echo $imageName;?>" method="post" enctype="multipart/form-data">
                                         <input type="hidden" name="imageName" value="<?php echo $imageName; ?>">
                                         <button type="submit" class="btn btn-primary ml-2"><i class="fa fa-trash"></i></button>
+                                    </form> -->
+                                    <form action="<?php echo Config::get('URL'); ?>cloud/sendEmail/<?php echo $imageName;?>" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="imageName" value="<?php echo $imageName; ?>">
+                                        <input type="email" name="email" placeholder="Email" required>
+                                        <button type="submit" class="btn btn-primary ml-2"><i class="fa fa-download"></i></button>
                                     </form>
                                 </div>
                             </div>
